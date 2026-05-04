@@ -180,9 +180,9 @@ ul {
 }
 
 .hero__title {
-  font-size: clamp(42px, 7vw, 74px);
+  font-size: clamp(32px, 5vw, 56px); /* Giảm max size xuống 56px */
   font-weight: 800;
-  line-height: 1.08;
+  line-height: 1.1; /* Tăng line-height lên chút để các dòng không bị dính vào nhau */
   margin-bottom: 22px;
 }
 
@@ -454,11 +454,6 @@ section {
     font-size: 28px;
     font-weight: bold;
     min-height: 250px;
-}
-
-/* Gradient cho Kiểm định (Tím - Xanh dương) */
-.gradient-kiemdinh {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 /* Gradient cho Đào tạo (Cam - Đỏ) */
