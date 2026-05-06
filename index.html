@@ -23,7 +23,7 @@
         </span>
         <div class="topbar__links">
           <a href="#">Trang chủ</a> <a href="#">Giới thiệu</a>
-          <a href="#">Tin tức</a> <a href="#">Liên hệ</a>
+          <a href="#tin-tuc">Tin tức</a> <a href="#">Liên hệ</a>
         </div>
       </div>
     </div>
@@ -38,8 +38,14 @@
             class="logo-img"
           />
         </div>
+        <button class="hamburger" id="hamburger" aria-label="Mở menu" aria-expanded="false">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
         <nav class="nav" id="nav">
           <a href="#" class="nav__link nav__link--active">Trang chủ</a>
+          <a href="#tin-tuc" class="nav__link">Tin tức</a>
           <a href="#dich-vu" class="nav__link">Dịch vụ</a>
           <a href="#chung-nhan" class="nav__link">Chứng nhận</a>
           <a href="#dao-tao" class="nav__link">Đào tạo</a>
@@ -92,7 +98,6 @@
           <button class="tab tab--active" data-tab="chung-nhan">
             Chứng nhận hệ thống
           </button>
-          <button class="tab" data-tab="kiem-dinh">Kiểm định an toàn</button>
           <button class="tab" data-tab="dao-tao">Đào tạo huấn luyện</button>
           <button class="tab" data-tab="tu-van">Tư vấn thẩm định</button>
         </div>
@@ -138,6 +143,157 @@
         </div>
     </div>
 </div>
+<!-- TIN TỨC -->
+<section id="tin-tuc" class="news-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Tin tức</span>
+      <h2 class="section-title">Bài viết đã đăng</h2>
+      <p class="section-desc">
+        Cập nhật các bài viết, thông báo và thông tin chuyên ngành thẩm định giá.
+      </p>
+    </div>
+
+    <div class="news-admin-bar">
+      <button id="postArticleBtn" class="btn btn--primary admin-only">
+        Đăng bài
+      </button>
+
+      <button id="logoutAdminBtn" class="btn btn--outline-dark admin-only">
+        Đăng xuất quản trị
+      </button>
+    </div>
+
+    <div id="newsList" class="news-list"></div>
+  </div>
+</section>
+
+<!-- NÚT ĐĂNG NHẬP QUẢN TRỊ GÓC PHẢI -->
+<button id="adminLoginBtn" class="floating-admin-btn">
+  Đăng nhập nếu bạn là quản trị viên
+</button>
+
+<!-- FORM ĐĂNG NHẬP / REGISTER QUẢN TRỊ -->
+<div id="adminModal" class="modal">
+  <div class="modal__box">
+    <button class="modal__close" data-close="adminModal">&times;</button>
+
+    <h3>Đăng ký / Đăng nhập quản trị viên</h3>
+    <p class="modal__desc">
+      Nhập thông tin quản trị để mở chức năng đăng bài.
+    </p>
+
+    <form id="adminRegisterForm" class="modal-form">
+      <input type="text" id="adminName" placeholder="Họ và tên quản trị viên" required />
+      <input type="email" id="adminEmail" placeholder="Email quản trị" required />
+      <input type="password" id="adminPassword" placeholder="Mật khẩu" required />
+      <input type="password" id="adminCode" placeholder="Mã quản trị viên" required />
+
+      <button type="submit" class="btn btn--primary">
+        Xác nhận quản trị
+      </button>
+    </form>
+  </div>
+</div>
+<!-- FORM ĐĂNG BÀI -->
+<div id="postModal" class="modal">
+  <div class="modal__box">
+    <button class="modal__close" data-close="postModal">&times;</button>
+
+    <h3>Đăng bài tin tức</h3>
+    <p class="modal__desc">
+      Nhập tiêu đề, đường dẫn và mô tả ngắn của bài viết.
+    </p>
+
+    <form id="postArticleForm" class="modal-form">
+      <input type="text" id="postTitle" placeholder="Tiêu đề bài viết" required />
+      <input type="url" id="postUrl" placeholder="Link bài viết, ví dụ: https://..." required />
+      <textarea id="postDesc" rows="4" placeholder="Mô tả ngắn"></textarea>
+
+      <button type="submit" class="btn btn--primary">
+        Lưu bài viết
+      </button>
+    </form>
+  </div>
+</div>
+<!-- LIÊN HỆ -->
+<section id="lien-he" class="contact-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Liên hệ</span>
+      <h2 class="section-title">Liên hệ Thẩm Định Giá Bảo Tín</h2>
+      <p class="section-desc">
+        Gửi thông tin tài sản cần thẩm định, chúng tôi sẽ liên hệ tư vấn trong thời gian sớm nhất.
+      </p>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h3>Thông tin liên hệ</h3>
+
+        <div class="contact-item">
+          <strong>Hotline</strong>
+          <a href="tel:0901204666">0901 204 666</a>
+        </div>
+
+        <div class="contact-item">
+          <strong>Email</strong>
+          <a href="mailto:Thamdinhgiabaotindn@gmail.com">
+            Thamdinhgiabaotindn@gmail.com
+          </a>
+        </div>
+
+        <div class="contact-item">
+          <strong>Zalo</strong>
+          <a href="https://zalo.me/0901204666" target="_blank" rel="noopener noreferrer">
+            Chat Zalo ngay
+          </a>
+        </div>
+
+        <div class="contact-item">
+          <strong>Thời gian làm việc</strong>
+          <span>Thứ 2 – Thứ 6: 07:30 – 17:00</span>
+        </div>
+
+        <div class="contact-actions">
+          <a href="tel:0901204666" class="btn btn--primary">Gọi ngay</a>
+          <a href="mailto:Thamdinhgiabaotindn@gmail.com" class="btn btn--outline-dark">
+            Gửi email
+          </a>
+        </div>
+      </div>
+
+      <div class="contact-form-box">
+        <h3>Gửi yêu cầu tư vấn</h3>
+
+        <form id="contactForm" class="contact-form">
+          <input type="text" id="contactName" placeholder="Họ và tên" required />
+          <input type="tel" id="contactPhone" placeholder="Số điện thoại" required />
+          <input type="email" id="contactEmail" placeholder="Email nếu có" />
+
+          <select id="contactService" required>
+            <option value="">Chọn nhu cầu thẩm định</option>
+            <option value="Thẩm định giá bất động sản">Thẩm định giá bất động sản</option>
+            <option value="Thẩm định giá máy móc thiết bị">Thẩm định giá máy móc thiết bị</option>
+            <option value="Thẩm định giá doanh nghiệp">Thẩm định giá doanh nghiệp</option>
+            <option value="Thẩm định giá tài sản khác">Thẩm định giá tài sản khác</option>
+          </select>
+
+          <textarea
+            id="contactMessage"
+            rows="5"
+            placeholder="Nội dung cần tư vấn"
+            required
+          ></textarea>
+
+          <button type="submit" class="btn btn--primary">
+            Gửi yêu cầu liên hệ
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
     <!-- FOOTER -->
     <footer class="footer">
       <div class="container">
@@ -147,8 +303,6 @@
         </p>
       </div>
     </footer>
-    <script>
-      // Menu mobile document.getElementById('hamburger').addEventListener('click', function() { document.getElementById('nav').classList.toggle('nav--open'); });
-    </script>
+    <script src="./script.js"></script>
   </body>
 </html>
