@@ -834,3 +834,33 @@ section {
     padding: 26px;
   }
 }
+/* ====================== CHỨNG NHẬN FOCUS ANIMATION ====================== */
+
+#chung-nhan-panel {
+  scroll-margin-top: 130px;
+}
+
+.tab-pane--focus {
+  animation: paneFocusSlide 0.75s ease both;
+}
+
+@keyframes paneFocusSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(45px);
+    box-shadow: 0 0 0 rgba(29, 78, 216, 0);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 0 0 5px rgba(29, 78, 216, 0.16),
+      0 20px 50px rgba(15, 23, 42, 0.16);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+  }
+}
