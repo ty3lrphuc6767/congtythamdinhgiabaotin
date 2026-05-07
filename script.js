@@ -52,30 +52,71 @@ function initMobileMenu() {
 function initTabs() {
   const tabs = document.querySelectorAll(".tab");
   const tabContents = document.querySelectorAll(".tab-content");
+  const tabOpenLinks = document.querySelectorAll("[data-open-tab]");
 
   if (!tabs.length || !tabContents.length) return;
+
+  function openTab(tabName, shouldScroll) {
+    const targetTab = document.querySelector(`.tab[data-tab="${tabName}"]`);
+    const targetContent = document.getElementById("tab-" + tabName);
+
+    if (!targetTab || !targetContent) return;
+
+    tabs.forEach(function (item) {
+      item.classList.remove("tab--active");
+    });
+
+    tabContents.forEach(function (content) {
+      content.classList.remove("tab-content--active");
+    });
+
+    targetTab.classList.add("tab--active");
+    targetContent.classList.add("tab-content--active");
+
+    const targetPane = targetContent.querySelector(".tab-pane");
+
+    if (targetPane) {
+      targetPane.classList.remove("tab-pane--focus");
+      void targetPane.offsetWidth;
+      targetPane.classList.add("tab-pane--focus");
+    }
+
+    if (shouldScroll && targetPane) {
+      setTimeout(function () {
+        targetPane.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }, 150);
+    }
+  }
 
   tabs.forEach(function (tab) {
     tab.addEventListener("click", function () {
       const tabName = tab.getAttribute("data-tab");
-      const targetContent = document.getElementById("tab-" + tabName);
+      openTab(tabName, false);
+    });
+  });
 
-      if (!targetContent) return;
+  tabOpenLinks.forEach(function (link) {
+    link.addEventListener("click", function (event) {
+      event.preventDefault();
 
-      tabs.forEach(function (item) {
-        item.classList.remove("tab--active");
-      });
+      const tabName = link.getAttribute("data-open-tab");
+      openTab(tabName, true);
 
-      tabContents.forEach(function (content) {
-        content.classList.remove("tab-content--active");
-      });
+      const nav = document.getElementById("nav");
+      const hamburger = document.getElementById("hamburger");
 
-      tab.classList.add("tab--active");
-      targetContent.classList.add("tab-content--active");
+      if (nav) nav.classList.remove("nav--open");
+
+      if (hamburger) {
+        hamburger.classList.remove("hamburger--active");
+        hamburger.setAttribute("aria-expanded", "false");
+      }
     });
   });
 }
-
 // ====================== NEWS ADMIN SYSTEM ======================
 
 function initNewsSystem() {
