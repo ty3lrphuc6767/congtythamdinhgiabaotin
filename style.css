@@ -836,7 +836,8 @@ section {
 }
 /* ====================== CHỨNG NHẬN FOCUS ANIMATION ====================== */
 
-#chung-nhan-panel {
+#chung-nhan-panel,
+#dao-tao-panel {
   scroll-margin-top: 130px;
 }
 
@@ -862,5 +863,145 @@ section {
     opacity: 1;
     transform: translateY(0);
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+  }
+}
+/* ====================== TAB PANEL SCROLL + ANIMATION ====================== */
+
+/* Khi bấm menu Chứng nhận / Đào tạo, nó lướt xuống không bị header che */
+#chung-nhan-panel,
+#dao-tao-panel {
+  scroll-margin-top: 130px;
+}
+
+/* Class này được JS thêm vào để tạo animation */
+.tab-pane--focus {
+  animation: paneFocusSlide 0.75s ease both;
+}
+
+/* Hiệu ứng lướt lên + nhấn nhẹ khung */
+@keyframes paneFocusSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(45px);
+    box-shadow: 0 0 0 rgba(29, 78, 216, 0);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow:
+      0 0 0 5px rgba(29, 78, 216, 0.16),
+      0 20px 50px rgba(15, 23, 42, 0.16);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+  }
+}
+/* ====================== FIX GIAO DIỆN TAB ĐÀO TẠO ====================== */
+
+/* Cho panel Đào tạo chiếm full khung, không bị bó vào 1 cột */
+#dao-tao-panel {
+  display: block;
+  padding: 0;
+}
+
+/* Card Đào tạo full chiều ngang, cân đối hơn */
+#dao-tao-panel .custom-card {
+  width: 100%;
+  max-width: 980px;
+  min-height: 280px;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  background: #ffffff;
+  border-radius: 26px;
+  overflow: hidden;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+  border: 1px solid #e5e7eb;
+}
+
+/* Khối hình bên trái đổi sang xanh-vàng cho đồng bộ Bảo Tín */
+#dao-tao-panel .card-image {
+  min-height: 280px;
+  background: linear-gradient(135deg, #0f3d8f 0%, #1d4ed8 55%, #fbbf24 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+/* Chữ ĐÀO TẠO không bị bể */
+#dao-tao-panel .card-image span {
+  display: block;
+  white-space: nowrap;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* Nội dung bên phải */
+#dao-tao-panel .card-content {
+  padding: 42px 46px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#dao-tao-panel .card-content h3 {
+  font-size: 30px;
+  color: #1e40af;
+  margin-bottom: 12px;
+}
+
+#dao-tao-panel .card-content p {
+  color: #334155;
+  font-size: 17px;
+  margin-bottom: 18px;
+  max-width: 560px;
+}
+
+#dao-tao-panel .card-content ul {
+  display: grid;
+  gap: 10px;
+}
+
+#dao-tao-panel .card-content ul li {
+  font-size: 16.5px;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+#dao-tao-panel .card-content ul li::before {
+  content: "✓";
+  color: #1d4ed8;
+  margin-right: 10px;
+  font-weight: 900;
+}
+
+/* Responsive mobile */
+@media (max-width: 768px) {
+  #dao-tao-panel .custom-card {
+    grid-template-columns: 1fr;
+  }
+
+  #dao-tao-panel .card-image {
+    min-height: 150px;
+  }
+
+  #dao-tao-panel .card-image span {
+    font-size: 28px;
+  }
+
+  #dao-tao-panel .card-content {
+    padding: 28px;
+  }
+
+  #dao-tao-panel .card-content h3 {
+    font-size: 24px;
   }
 }
