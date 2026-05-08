@@ -1,439 +1,1007 @@
-// ====================== BẢO TÍN WEBSITE FUNCTIONS ======================
 
-document.addEventListener("DOMContentLoaded", function () {
-  initStickyHeader();
-  initMobileMenu();
-  initTabs();
-  initNewsSystem();
-  initContactForm();
-});
-
-// ====================== HEADER SCROLL EFFECT ======================
-function initStickyHeader() {
-  const header = document.querySelector(".header");
-
-  if (!header) return;
-
-  window.addEventListener("scroll", function () {
-    if (window.scrollY > 40) {
-      header.classList.add("header--scrolled");
-    } else {
-      header.classList.remove("header--scrolled");
-    }
-  });
+/* ====================== RESET & GLOBAL ====================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-// ====================== MOBILE MENU ======================
-function initMobileMenu() {
-  const hamburger = document.getElementById("hamburger");
-  const nav = document.getElementById("nav");
-  const navLinks = document.querySelectorAll(".nav__link");
-
-  if (!hamburger || !nav) return;
-
-  hamburger.addEventListener("click", function () {
-    nav.classList.toggle("nav--open");
-    hamburger.classList.toggle("hamburger--active");
-
-    const isOpen = nav.classList.contains("nav--open");
-    hamburger.setAttribute("aria-expanded", isOpen ? "true" : "false");
-  });
-
-  navLinks.forEach(function (link) {
-    link.addEventListener("click", function () {
-      nav.classList.remove("nav--open");
-      hamburger.classList.remove("hamburger--active");
-      hamburger.setAttribute("aria-expanded", "false");
-    });
-  });
+html {
+  scroll-behavior: smooth;
 }
 
-// ====================== SERVICE TABS ======================
-function initTabs() {
-  const tabs = document.querySelectorAll(".tab");
-  const tabContents = document.querySelectorAll(".tab-content");
-  const tabOpenLinks = document.querySelectorAll("[data-open-tab]");
-
-  if (!tabs.length || !tabContents.length) return;
-
-  function openTab(tabName, shouldScroll) {
-    const targetTab = document.querySelector(`.tab[data-tab="${tabName}"]`);
-    const targetContent = document.getElementById("tab-" + tabName);
-
-    if (!targetTab || !targetContent) return;
-
-    tabs.forEach(function (item) {
-      item.classList.remove("tab--active");
-    });
-
-    tabContents.forEach(function (content) {
-      content.classList.remove("tab-content--active");
-    });
-
-    targetTab.classList.add("tab--active");
-    targetContent.classList.add("tab-content--active");
-
-    const targetPane = targetContent.querySelector(".tab-pane");
-
-    if (targetPane) {
-      targetPane.classList.remove("tab-pane--focus");
-      void targetPane.offsetWidth;
-      targetPane.classList.add("tab-pane--focus");
-    }
-
-    if (shouldScroll && targetPane) {
-      setTimeout(function () {
-        targetPane.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-      }, 150);
-    }
-  }
-
-  tabs.forEach(function (tab) {
-    tab.addEventListener("click", function () {
-      const tabName = tab.getAttribute("data-tab");
-      openTab(tabName, false);
-    });
-  });
-
-  tabOpenLinks.forEach(function (link) {
-    link.addEventListener("click", function (event) {
-      event.preventDefault();
-
-      const tabName = link.getAttribute("data-open-tab");
-      openTab(tabName, true);
-
-      const nav = document.getElementById("nav");
-      const hamburger = document.getElementById("hamburger");
-
-      if (nav) nav.classList.remove("nav--open");
-
-      if (hamburger) {
-        hamburger.classList.remove("hamburger--active");
-        hamburger.setAttribute("aria-expanded", "false");
-      }
-    });
-  });
+body {
+  font-family: "Be Vietnam Pro", sans-serif;
+  color: #1e293b;
+  background: #f8fafc;
+  line-height: 1.6;
+  font-size: 16px;
 }
-// ====================== NEWS ADMIN SYSTEM ======================
 
-function initNewsSystem() {
-  const ADMIN_SECRET_CODE = "BAOTIN2026";
-
-  const adminLoginBtn = document.getElementById("adminLoginBtn");
-  const adminModal = document.getElementById("adminModal");
-  const postModal = document.getElementById("postModal");
-
-  const adminRegisterForm = document.getElementById("adminRegisterForm");
-  const postArticleForm = document.getElementById("postArticleForm");
-
-  const postArticleBtn = document.getElementById("postArticleBtn");
-  const logoutAdminBtn = document.getElementById("logoutAdminBtn");
-  const newsList = document.getElementById("newsList");
-
-  if (!newsList) return;
-
-  const defaultNews = [
-    {
-      id: 1,
-      title: "Dịch vụ thẩm định giá bất động sản chuyên nghiệp",
-      url: "#",
-      desc: "Thông tin tổng quan về dịch vụ thẩm định giá bất động sản cho cá nhân, doanh nghiệp và tổ chức tín dụng.",
-      date: "2026-01-01"
-    },
-    {
-      id: 2,
-      title: "Thẩm định giá máy móc thiết bị và tài sản doanh nghiệp",
-      url: "#",
-      desc: "Giải pháp xác định giá trị máy móc, dây chuyền sản xuất, phương tiện vận tải và tài sản cố định.",
-      date: "2026-01-02"
-    }
-  ];
-
-  function getAdminStatus() {
-    return localStorage.getItem("btva_is_admin") === "true";
-  }
-
-  function setAdminStatus(value) {
-    localStorage.setItem("btva_is_admin", value ? "true" : "false");
-  }
-
-  function getNewsPosts() {
-    const savedPosts = localStorage.getItem("btva_news_posts");
-
-    if (!savedPosts) {
-      localStorage.setItem("btva_news_posts", JSON.stringify(defaultNews));
-      return defaultNews;
-    }
-
-    try {
-      return JSON.parse(savedPosts);
-    } catch (error) {
-      localStorage.setItem("btva_news_posts", JSON.stringify(defaultNews));
-      return defaultNews;
-    }
-  }
-
-  function saveNewsPosts(posts) {
-    localStorage.setItem("btva_news_posts", JSON.stringify(posts));
-  }
-
-  function openModal(modal) {
-    if (!modal) return;
-    modal.classList.add("modal--open");
-  }
-
-  function closeModal(modal) {
-    if (!modal) return;
-    modal.classList.remove("modal--open");
-  }
-
-  function updateAdminUI() {
-    const isAdmin = getAdminStatus();
-    const adminOnlyElements = document.querySelectorAll(".admin-only");
-
-    adminOnlyElements.forEach(function (element) {
-      element.style.display = isAdmin ? "inline-flex" : "none";
-    });
-
-    if (adminLoginBtn) {
-      adminLoginBtn.style.display = isAdmin ? "none" : "block";
-    }
-
-    renderNewsList();
-  }
-
-  function renderNewsList() {
-    const posts = getNewsPosts();
-    const isAdmin = getAdminStatus();
-
-    if (!posts.length) {
-      newsList.innerHTML = `
-        <div class="empty-news">
-          Chưa có bài viết nào. Quản trị viên có thể đăng bài mới.
-        </div>
-      `;
-      return;
-    }
-
-    newsList.innerHTML = posts
-      .map(function (post) {
-        return `
-          <article class="news-card">
-            <div class="news-card__content">
-              <span class="news-card__date">${post.date || ""}</span>
-              <h3>${escapeHTML(post.title)}</h3>
-              <p>${escapeHTML(post.desc || "")}</p>
-
-              <div class="news-card__actions">
-                <a href="${escapeAttribute(post.url)}" target="_blank" rel="noopener noreferrer" class="news-link">
-                  Xem bài viết
-                </a>
-
-                ${
-                  isAdmin
-                    ? `<button class="delete-news-btn" data-id="${post.id}">Xóa bài</button>`
-                    : ""
-                }
-              </div>
-            </div>
-          </article>
-        `;
-      })
-      .join("");
-  }
-
-  function escapeHTML(text) {
-    return String(text)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
-  }
-
-  function escapeAttribute(text) {
-    return String(text).replaceAll('"', "%22").replaceAll("'", "%27");
-  }
-
-  if (adminLoginBtn) {
-    adminLoginBtn.addEventListener("click", function () {
-      openModal(adminModal);
-    });
-  }
-
-  if (postArticleBtn) {
-    postArticleBtn.addEventListener("click", function () {
-      openModal(postModal);
-    });
-  }
-
-  if (logoutAdminBtn) {
-    logoutAdminBtn.addEventListener("click", function () {
-      const confirmLogout = confirm("Anh có chắc muốn đăng xuất quản trị không?");
-
-      if (!confirmLogout) return;
-
-      setAdminStatus(false);
-      updateAdminUI();
-    });
-  }
-
-  document.querySelectorAll(".modal__close").forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      const modalId = btn.getAttribute("data-close");
-      const modal = document.getElementById(modalId);
-      closeModal(modal);
-    });
-  });
-
-  document.querySelectorAll(".modal").forEach(function (modal) {
-    modal.addEventListener("click", function (event) {
-      if (event.target === modal) {
-        closeModal(modal);
-      }
-    });
-  });
-
-  if (adminRegisterForm) {
-    adminRegisterForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-
-      const name = document.getElementById("adminName").value.trim();
-      const email = document.getElementById("adminEmail").value.trim();
-      const password = document.getElementById("adminPassword").value.trim();
-      const adminCode = document.getElementById("adminCode").value.trim();
-
-      if (!name || !email || !password || !adminCode) {
-        alert("Anh nhập đủ thông tin quản trị giúp em.");
-        return;
-      }
-
-      if (adminCode !== ADMIN_SECRET_CODE) {
-        alert("Mã quản trị viên không đúng.");
-        return;
-      }
-
-      if (password.length < 6) {
-        alert("Mật khẩu nên có ít nhất 6 ký tự.");
-        return;
-      }
-
-      const adminInfo = {
-        name: name,
-        email: email,
-        createdAt: new Date().toISOString()
-      };
-
-      localStorage.setItem("btva_admin_info", JSON.stringify(adminInfo));
-      setAdminStatus(true);
-
-      adminRegisterForm.reset();
-      closeModal(adminModal);
-      updateAdminUI();
-
-      alert("Đăng nhập quản trị thành công. Anh có thể đăng bài ở mục Tin tức.");
-    });
-  }
-
-  if (postArticleForm) {
-    postArticleForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-
-      if (!getAdminStatus()) {
-        alert("Anh cần đăng nhập quản trị viên trước.");
-        return;
-      }
-
-      const title = document.getElementById("postTitle").value.trim();
-      const url = document.getElementById("postUrl").value.trim();
-      const desc = document.getElementById("postDesc").value.trim();
-
-      if (!title || !url) {
-        alert("Tiêu đề và link bài viết là bắt buộc.");
-        return;
-      }
-
-      const posts = getNewsPosts();
-
-      const newPost = {
-        id: Date.now(),
-        title: title,
-        url: url,
-        desc: desc,
-        date: new Date().toLocaleDateString("vi-VN")
-      };
-
-      posts.unshift(newPost);
-      saveNewsPosts(posts);
-
-      postArticleForm.reset();
-      closeModal(postModal);
-      renderNewsList();
-
-      alert("Đã đăng bài thành công.");
-    });
-  }
-
-  newsList.addEventListener("click", function (event) {
-    const deleteBtn = event.target.closest(".delete-news-btn");
-
-    if (!deleteBtn) return;
-
-    if (!getAdminStatus()) {
-      alert("Anh cần đăng nhập quản trị viên trước.");
-      return;
-    }
-
-    const postId = Number(deleteBtn.getAttribute("data-id"));
-    const confirmDelete = confirm("Anh có chắc muốn xóa bài này không?");
-
-    if (!confirmDelete) return;
-
-    const posts = getNewsPosts().filter(function (post) {
-      return Number(post.id) !== postId;
-    });
-
-    saveNewsPosts(posts);
-    renderNewsList();
-  });
-
-  updateAdminUI();
+.container {
+  width: min(1200px, 92%);
+  margin: auto;
 }
-// ====================== CONTACT FORM ======================
 
-function initContactForm() {
-  const contactForm = document.getElementById("contactForm");
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
 
-  if (!contactForm) return;
+ul {
+  list-style: none;
+}
 
-  contactForm.addEventListener("submit", function (event) {
-    event.preventDefault();
+/* ====================== TOPBAR ====================== */
+.topbar {
+  background: #0f3d8f;
+  color: white;
+  font-size: 14.5px;
+  padding: 11px 0;
+  position: relative;
+  z-index: 1001;
+}
 
-    const name = document.getElementById("contactName").value.trim();
-    const phone = document.getElementById("contactPhone").value.trim();
-    const email = document.getElementById("contactEmail").value.trim();
-    const service = document.getElementById("contactService").value.trim();
-    const message = document.getElementById("contactMessage").value.trim();
+.topbar__inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
 
-    if (!name || !phone || !service || !message) {
-      alert("Anh/chị vui lòng nhập đầy đủ họ tên, số điện thoại, nhu cầu và nội dung tư vấn.");
-      return;
-    }
+.topbar__text strong {
+  color: #fbbf24;
+}
 
-    const companyEmail = "Thamdinhgiabaotindn@gmail.com";
-    const subject = encodeURIComponent("Yêu cầu tư vấn thẩm định giá từ website");
+.topbar__links {
+  display: flex;
+  gap: 22px;
+  font-weight: 500;
+}
 
-    const body = encodeURIComponent(
-      `Họ và tên: ${name}\n` +
-      `Số điện thoại: ${phone}\n` +
-      `Email: ${email || "Không cung cấp"}\n` +
-      `Nhu cầu: ${service}\n\n` +
-      `Nội dung:\n${message}`
-    );
+.topbar__links a:hover {
+  color: #fbbf24;
+}
 
-    window.location.href = `mailto:${companyEmail}?subject=${subject}&body=${body}`;
-  });
+/* ====================== HEADER ====================== */
+.header {
+  background: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+  transition: all 0.4s ease;
+}
+
+.header--scrolled {
+  box-shadow: 0 10px 35px rgba(0,0,0,0.12);
+}
+
+.header__inner {
+  height: 86px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header__logo img {
+  height: 54px;
+  transition: transform 0.4s ease;
+}
+
+.header__logo img:hover {
+  transform: scale(1.08);
+}
+
+/* NAV */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.nav__link {
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.nav__link:hover,
+.nav__link--active {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.nav__link--cta {
+  background: #1d4ed8;
+  color: white;
+  padding: 10px 26px;
+  border-radius: 9999px;
+}
+
+.nav__link--cta:hover {
+  background: #1746c5;
+  transform: translateY(-2px);
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.hamburger span {
+  width: 26px;
+  height: 3px;
+  background: #0f172a;
+  border-radius: 3px;
+  transition: 0.3s;
+}
+
+/* ====================== HERO ====================== */
+.hero {
+  position: relative;
+  min-height: 94vh;
+  background: linear-gradient(rgba(9, 45, 112, 0.82), rgba(29, 78, 216, 0.78)),
+              url("https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000&q=80") center/cover no-repeat;
+  color: white;
+  display: flex;
+  align-items: center;
+}
+
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+}
+
+.hero__content {
+  position: relative;
+  z-index: 2;
+  max-width: 780px;
+}
+
+.hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 10px 22px;
+  border-radius: 9999px;
+  margin-bottom: 28px;
+  font-size: 15px;
+}
+
+.hero__title {
+  font-size: clamp(32px, 5vw, 56px); /* Giảm max size xuống 56px */
+  font-weight: 800;
+  line-height: 1.1; /* Tăng line-height lên chút để các dòng không bị dính vào nhau */
+  margin-bottom: 22px;
+}
+
+.hero__title span {
+  color: #fbbf24;
+  display: block;
+}
+
+.hero__desc {
+  font-size: 1.28rem;
+  max-width: 680px;
+  margin-bottom: 42px;
+  opacity: 0.94;
+}
+
+/* BUTTON */
+.btn {
+  display: inline-block;
+  padding: 15px 34px;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+
+.btn--primary {
+  background: #fbbf24;
+  color: #111827;
+}
+
+.btn--primary:hover {
+  background: #f59e0b;
+  transform: translateY(-5px);
+  box-shadow: 0 20px 30px rgba(251,191,36,0.4);
+}
+
+.btn--outline {
+  border: 2px solid rgba(255,255,255,0.75);
+  color: white;
+}
+
+.btn--outline:hover {
+  background: white;
+  color: #1d4ed8;
+}
+
+/* STATS */
+.hero__stats {
+  margin-top: 60px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(12px);
+  padding: 26px 32px;
+  border-radius: 20px;
+  display: flex;
+  gap: 40px;
+  width: fit-content;
+}
+
+.stat strong {
+  font-size: 2.1rem;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.stat span {
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+/* SECTION GENERAL */
+section {
+  padding: 110px 0;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section-tag {
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 8px 20px;
+  border-radius: 9999px;
+  font-size: 14.5px;
+  font-weight: 600;
+}
+
+.section-title {
+  font-size: 42px;
+  font-weight: 800;
+  margin: 16px 0 12px;
+}
+
+/* TABS */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.tab {
+  padding: 14px 26px;
+  background: white;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.07);
+  transition: all 0.4s;
+}
+
+.tab:hover {
+  transform: translateY(-4px);
+}
+
+.tab--active {
+  background: #1d4ed8;
+  color: white;
+  box-shadow: 0 10px 25px rgba(29,78,216,0.3);
+}
+
+/* TAB CONTENT */
+.tab-pane {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 50px;
+  background: white;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+}
+
+.img-placeholder {
+  min-height: 380px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #1e40af, #0f172a);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+}
+
+.img-placeholder__icon {
+  font-size: 78px;
+  margin-bottom: 16px;
+}
+
+/* WHY US + CARDS */
+.why-us {
+  background: linear-gradient(135deg, #0f172a, #1e40af);
+  color: white;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 28px;
+}
+
+.card--glass {
+  background: rgba(255,255,255,0.09);
+  backdrop-filter: blur(14px);
+  padding: 32px;
+  border-radius: 20px;
+  transition: 0.4s;
+}
+
+.card--glass:hover {
+  transform: translateY(-12px);
+}
+
+/* PROCESS, CONTACT, FOOTER... (tiếp tục tương tự) */
+
+@media (max-width: 992px) {
+  .nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    flex-direction: column;
+    padding: 25px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .nav.nav--open {
+    display: flex;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero__actions { flex-direction: column; }
+  .tab-pane { grid-template-columns: 1fr; }
+}
+/* TAB CONTENT ẨN/HIỆN */
+.tab-content {
+  display: none;
+}
+
+.tab-content--active {
+  display: block;
+}
+
+/* FEATURE LIST */
+.feature-list {
+  margin-top: 16px;
+}
+
+.feature-list li {
+  padding: 8px 0;
+  font-weight: 500;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* TAB BODY */
+.tab-pane__body h3 {
+  font-size: 26px;
+  margin-bottom: 14px;
+  color: #1e40af;
+}
+
+.tab-pane__body p {
+  margin-bottom: 16px;
+  color: #475569;
+}
+
+/* FIX VỠ LAYOUT LOGO (CÁI MÀY BỊ) */
+.logo-img {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* RESPONSIVE FIX */
+@media (max-width: 768px) {
+  .header__logo img {
+    height: 42px;
+  }
+
+  .tab-pane {
+    padding: 24px;
+  }
+}
+/* Card bao quanh nội dung */
+.custom-card {
+    display: flex;
+    background: #fff;
+    border-radius: 20px; /* Bo góc khối lớn */
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.custom-card:hover {
+    transform: translateY(-5px); /* Hiệu ứng nổi lên khi di chuột vào */
+}
+
+/* Khối ảnh bên trái */
+.card-image {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    min-height: 250px;
+}
+
+/* Gradient cho Đào tạo (Cam - Đỏ) */
+.gradient-daotao {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+    color: #333; /* Màu chữ đậm cho nền sáng */
+}
+
+/* Phần nội dung chữ bên phải */
+.card-content {
+    flex: 2;
+    padding: 30px;
+}
+
+.card-content h3 {
+    margin-top: 0;
+    color: #2d3436;
+}
+
+.card-content ul {
+    list-style: none;
+    padding: 0;
+}
+
+.card-content ul li::before {
+    content: "✓";
+    color: #007bff;
+    margin-right: 10px;
+    font-weight: bold;
+}
+/* ====================== NEWS SECTION ====================== */
+
+.news-section {
+  background: #f8fafc;
+}
+
+.news-admin-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.admin-only {
+  display: none;
+}
+
+.btn--outline-dark {
+  border: 2px solid #1e40af;
+  color: #1e40af;
+  background: white;
+}
+
+.btn--outline-dark:hover {
+  background: #1e40af;
+  color: white;
+}
+
+.news-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 24px;
+}
+
+.news-card {
+  background: white;
+  border-radius: 22px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+  transition: 0.35s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.news-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.13);
+}
+
+.news-card__content {
+  padding: 26px;
+}
+
+.news-card__date {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 6px 12px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+}
+
+.news-card h3 {
+  font-size: 21px;
+  color: #0f172a;
+  margin-bottom: 12px;
+  line-height: 1.35;
+}
+
+.news-card p {
+  color: #475569;
+  margin-bottom: 20px;
+}
+
+.news-card__actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.news-link {
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.news-link:hover {
+  color: #f59e0b;
+}
+
+.delete-news-btn {
+  border: none;
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 9px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.delete-news-btn:hover {
+  background: #dc2626;
+  color: white;
+}
+
+.empty-news {
+  grid-column: 1 / -1;
+  text-align: center;
+  background: white;
+  padding: 34px;
+  border-radius: 20px;
+  color: #64748b;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.07);
+}
+
+/* ====================== FLOATING ADMIN BUTTON ====================== */
+
+.floating-admin-btn {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 2000;
+  border: none;
+  background: #0f3d8f;
+  color: white;
+  padding: 14px 22px;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 14px 35px rgba(15, 61, 143, 0.35);
+  transition: 0.3s ease;
+}
+
+.floating-admin-btn:hover {
+  background: #fbbf24;
+  color: #111827;
+  transform: translateY(-4px);
+}
+
+/* ====================== MODAL ====================== */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.68);
+  z-index: 3000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal--open {
+  display: flex;
+}
+
+.modal__box {
+  position: relative;
+  width: min(460px, 100%);
+  background: white;
+  padding: 34px;
+  border-radius: 24px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+  animation: modalFadeIn 0.28s ease;
+}
+
+.modal__box h3 {
+  font-size: 25px;
+  color: #0f172a;
+  margin-bottom: 10px;
+}
+
+.modal__desc {
+  color: #64748b;
+  margin-bottom: 22px;
+}
+
+.modal__close {
+  position: absolute;
+  right: 18px;
+  top: 14px;
+  border: none;
+  background: transparent;
+  font-size: 32px;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.modal__close:hover {
+  color: #dc2626;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modal-form input,
+.modal-form textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 13px 15px;
+  font-family: inherit;
+  font-size: 15px;
+  outline: none;
+}
+
+.modal-form input:focus,
+.modal-form textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ====================== MOBILE NEWS FIX ====================== */
+
+@media (max-width: 640px) {
+  .news-admin-bar {
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .floating-admin-btn {
+    right: 14px;
+    left: 14px;
+    bottom: 14px;
+    width: auto;
+  }
+
+  .modal__box {
+    padding: 26px;
+  }
+}
+/* ====================== CONTACT SECTION ====================== */
+
+.contact-section {
+  background: linear-gradient(135deg, #eff6ff, #ffffff);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 34px;
+  align-items: stretch;
+}
+
+.contact-info,
+.contact-form-box {
+  background: white;
+  padding: 34px;
+  border-radius: 24px;
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.08);
+  border: 1px solid #e5e7eb;
+}
+
+.contact-info h3,
+.contact-form-box h3 {
+  font-size: 26px;
+  color: #0f172a;
+  margin-bottom: 22px;
+}
+
+.contact-item {
+  padding: 16px 0;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.contact-item strong {
+  color: #1e40af;
+  font-size: 15px;
+}
+
+.contact-item a,
+.contact-item span {
+  color: #334155;
+  font-weight: 600;
+}
+
+.contact-item a:hover {
+  color: #f59e0b;
+}
+
+.contact-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 26px;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.contact-form input,
+.contact-form select,
+.contact-form textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-family: inherit;
+  font-size: 15px;
+  outline: none;
+  background: white;
+}
+
+.contact-form input:focus,
+.contact-form select:focus,
+.contact-form textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+@media (max-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-info,
+  .contact-form-box {
+    padding: 26px;
+  }
+}
+/* ====================== CHỨNG NHẬN FOCUS ANIMATION ====================== */
+
+#chung-nhan-panel,
+#dao-tao-panel {
+  scroll-margin-top: 130px;
+}
+
+.tab-pane--focus {
+  animation: paneFocusSlide 0.75s ease both;
+}
+
+@keyframes paneFocusSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(45px);
+    box-shadow: 0 0 0 rgba(29, 78, 216, 0);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 0 0 5px rgba(29, 78, 216, 0.16),
+      0 20px 50px rgba(15, 23, 42, 0.16);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+  }
+}
+/* ====================== TAB PANEL SCROLL + ANIMATION ====================== */
+
+/* Khi bấm menu Chứng nhận / Đào tạo, nó lướt xuống không bị header che */
+#chung-nhan-panel,
+#dao-tao-panel {
+  scroll-margin-top: 130px;
+}
+
+/* Class này được JS thêm vào để tạo animation */
+.tab-pane--focus {
+  animation: paneFocusSlide 0.75s ease both;
+}
+
+/* Hiệu ứng lướt lên + nhấn nhẹ khung */
+@keyframes paneFocusSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(45px);
+    box-shadow: 0 0 0 rgba(29, 78, 216, 0);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow:
+      0 0 0 5px rgba(29, 78, 216, 0.16),
+      0 20px 50px rgba(15, 23, 42, 0.16);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+  }
+}
+/* ====================== FIX GIAO DIỆN TAB ĐÀO TẠO ====================== */
+
+/* Cho panel Đào tạo chiếm full khung, không bị bó vào 1 cột */
+#dao-tao-panel {
+  display: block;
+  padding: 0;
+}
+
+/* Card Đào tạo full chiều ngang, cân đối hơn */
+#dao-tao-panel .custom-card {
+  width: 100%;
+  max-width: 980px;
+  min-height: 280px;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  background: #ffffff;
+  border-radius: 26px;
+  overflow: hidden;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+  border: 1px solid #e5e7eb;
+}
+
+/* Khối hình bên trái đổi sang xanh-vàng cho đồng bộ Bảo Tín */
+#dao-tao-panel .card-image {
+  min-height: 280px;
+  background: linear-gradient(135deg, #0f3d8f 0%, #1d4ed8 55%, #fbbf24 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+/* Chữ ĐÀO TẠO không bị bể */
+#dao-tao-panel .card-image span {
+  display: block;
+  white-space: nowrap;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* Nội dung bên phải */
+#dao-tao-panel .card-content {
+  padding: 42px 46px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#dao-tao-panel .card-content h3 {
+  font-size: 30px;
+  color: #1e40af;
+  margin-bottom: 12px;
+}
+
+#dao-tao-panel .card-content p {
+  color: #334155;
+  font-size: 17px;
+  margin-bottom: 18px;
+  max-width: 560px;
+}
+
+#dao-tao-panel .card-content ul {
+  display: grid;
+  gap: 10px;
+}
+
+#dao-tao-panel .card-content ul li {
+  font-size: 16.5px;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+#dao-tao-panel .card-content ul li::before {
+  content: "✓";
+  color: #1d4ed8;
+  margin-right: 10px;
+  font-weight: 900;
+}
+
+/* Responsive mobile */
+@media (max-width: 768px) {
+  #dao-tao-panel .custom-card {
+    grid-template-columns: 1fr;
+  }
+
+  #dao-tao-panel .card-image {
+    min-height: 150px;
+  }
+
+  #dao-tao-panel .card-image span {
+    font-size: 28px;
+  }
+
+  #dao-tao-panel .card-content {
+    padding: 28px;
+  }
+
+  #dao-tao-panel .card-content h3 {
+    font-size: 24px;
+  }
 }
