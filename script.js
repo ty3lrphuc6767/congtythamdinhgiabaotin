@@ -121,6 +121,7 @@ function initTabs() {
 
 function initNewsSystem() {
   const ADMIN_SECRET_CODE = "BAOTIN2026";
+  const ADMIN_PASSWORD = "123456";
 
   const adminLoginBtn = document.getElementById("adminLoginBtn");
   const adminModal = document.getElementById("adminModal");
