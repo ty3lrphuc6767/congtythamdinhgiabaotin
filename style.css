@@ -1294,3 +1294,39 @@ section {
     0 4px 18px rgba(0, 0, 0, 0.55),
     0 0 22px rgba(255, 255, 255, 0.38) !important;
 }
+/* ====================== POST MODE CHOICE ====================== */
+
+.post-choice-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.post-choice-grid .btn {
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+}
+
+#postLinkGroup,
+#postWriteGroup {
+  width: 100%;
+}
+
+.news-inline-content {
+  margin: 16px 0 20px;
+  padding: 16px;
+  background: #f8fafc;
+  border-left: 4px solid #1d4ed8;
+  border-radius: 12px;
+  color: #334155;
+  line-height: 1.75;
+  white-space: pre-line;
+}
+
+.news-link--text {
+  cursor: default;
+  color: #0f3d8f;
+  font-weight: 700;
+}
