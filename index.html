@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bảo Tín – Thẩm Định Giá Chuyên Nghiệp</title>
-    <link rel="stylesheet" href="./style.css?v=6" />
+    <link rel="stylesheet" href="./style.css?v=7" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -232,19 +232,57 @@
     </form>
   </div>
 </div>
-<!-- FORM ĐĂNG BÀI -->
+<!-- MODAL CHỌN KIỂU ĐĂNG BÀI -->
+<div id="choicePostModal" class="modal">
+  <div class="modal__box">
+    <button class="modal__close" data-close="choicePostModal">&times;</button>
+
+    <h3>Bạn muốn đăng bài bằng cách nào?</h3>
+    <p class="modal__desc">
+      Chọn hình thức đăng bài tin tức.
+    </p>
+
+    <div class="post-choice-grid">
+      <button id="choosePostLinkBtn" class="btn btn--primary" type="button">
+        Đăng bài bằng link
+      </button>
+
+      <button id="choosePostWriteBtn" class="btn btn--outline-dark" type="button">
+        Đăng bài bằng cách viết
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ĐĂNG BÀI -->
 <div id="postModal" class="modal">
   <div class="modal__box">
     <button class="modal__close" data-close="postModal">&times;</button>
 
     <h3>Đăng bài tin tức</h3>
-    <p class="modal__desc">
+    <p class="modal__desc" id="postModalDesc">
       Nhập tiêu đề, đường dẫn và mô tả ngắn của bài viết.
     </p>
 
     <form id="postArticleForm" class="modal-form">
       <input type="text" id="postTitle" placeholder="Tiêu đề bài viết" required />
-      <input type="url" id="postUrl" placeholder="Link bài viết, ví dụ: https://..." required />
+
+      <div id="postLinkGroup">
+        <input
+          type="url"
+          id="postUrl"
+          placeholder="Link bài viết, ví dụ: https://..."
+        />
+      </div>
+
+      <div id="postWriteGroup" style="display: none;">
+        <textarea
+          id="postContent"
+          rows="6"
+          placeholder="Nhập vào bài viết bạn muốn đăng"
+        ></textarea>
+      </div>
+
       <textarea id="postDesc" rows="4" placeholder="Mô tả ngắn"></textarea>
 
       <button type="submit" class="btn btn--primary">
@@ -340,6 +378,6 @@
         </p>
       </div>
     </footer>
-    <script src="./script.js?v=6"></script>
+    <script src="./script.js?v=7"></script>
   </body>
 </html>
